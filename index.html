@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="ОСББ «Богданівська 7Г»: хто з квартир скидався на генератор і на резервне живлення.">
+<style>*,*::before,*::after{box-sizing:border-box}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Вікна Богданівської 7Г</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
+<style>
+/* Айдентика ЖК: зелена хвиляста смуга з білим заголовком капсом, біле поле, будинок у темно-зеленому. Свідомо одна світла тема. */
+:root{
+  --green:#356458; --green-2:#41776a; --green-3:#5a9384;
+  --paper:#ffffff; --ink:#1f2b28; --muted:#5d6b67; --line:#dfe6e3;
+  --wall:#2f5a4f; --wall-edge:#264a41; --off:#4b7569; --off-ink:#a9c2bb;
+  --gen:#f6c445; --res:#8fd4ef; --lit-ink:#1f2b28; --hl:#d23b34;
+  --font:"Montserrat",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+body{background:var(--paper);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.5}
+.head{text-align:center}
+.head h1{margin:0;color:var(--green);font-weight:800;text-transform:uppercase;letter-spacing:.02em;font-size:clamp(22px,4.2vw,40px);line-height:1.15;text-wrap:balance}
+.wrap{max-width:1340px;margin:0 auto;padding-block:28px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:22px}
+.dot{width:14px;height:11px;border-radius:2px;display:inline-flex;overflow:hidden;flex:none}
+.dot i{flex:1}
+.scene{overflow-x:auto;padding-bottom:4px}
+.city{display:flex;align-items:flex-end;justify-content:center;gap:clamp(8px,1.6vw,18px);min-width:max-content;margin:0 auto;padding:10px 8px 0;position:relative}
+.city::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--green-3);border-radius:2px}
+.bld{display:flex;flex-direction:column;align-items:center;gap:6px}
+.blbl{font-size:12px;color:var(--muted);text-align:center;line-height:1.35;font-variant-numeric:tabular-nums}
+.blbl b{color:var(--green);font-weight:700;display:block;font-size:13px;text-transform:uppercase;letter-spacing:.03em}
+.body{background:var(--wall);border-top:4px solid var(--wall-edge);border-radius:4px 4px 0 0;padding:8px 8px 0;display:flex;flex-direction:column;gap:4px}
+.fl{display:flex;gap:4px;justify-content:center;align-items:center}
+.w{position:relative;width:34px;height:20px;border-radius:2px;background:var(--off);display:flex;overflow:hidden;padding:0;border:0;cursor:default;font:600 10px/20px var(--font);color:var(--off-ink);font-variant-numeric:tabular-nums}
+.w i{flex:1}
+.w span{position:absolute;inset:0;text-align:center;letter-spacing:-.02em}
+.w.lit span{color:var(--lit-ink)}
+.w:focus-visible{outline:2px solid var(--hl);outline-offset:1px}
+.door{height:14px}
+.scale .blbl{visibility:hidden}
+.scale .body{background:none;border-top-color:transparent;padding-left:0;padding-right:0}
+.scale .fl span{width:20px;height:20px;line-height:20px;font-size:11px;font-weight:500;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.gap{height:20px;flex:1}
+.legend{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;font-size:13px;font-weight:500;color:var(--ink)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:#fff;background:var(--green);font-weight:600;font-size:13px}
+tfoot td{font-weight:700;color:var(--green)}
+footer{font-size:12px;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="head"><h1>Як ми скидалися на світло</h1></header>
+
+  <div class="scene"><div class="city" id="city"></div></div>
+
+  <div class="legend">
+    <span><i class="dot" style="background:var(--gen)"></i>Генератор</span>
+    <span><i class="dot" style="background:var(--res)"></i>Резервне живлення</span>
+    <span><i class="dot"><i style="background:var(--gen)"></i><i style="background:var(--res)"></i></i>Обидва</span>
+    <span><i class="dot" style="background:var(--off)"></i>Не долучились</span>
+  </div>
+
+  <section class="tbl" aria-label="По секціях">
+    <table>
+      <thead><tr><th>Секція</th><th>Квартир</th><th>Генератор</th><th>Сума</th><th>Резервне живлення</th><th>Сума</th></tr></thead>
+      <tbody id="tbody"></tbody>
+      <tfoot id="tfoot"></tfoot>
+    </table>
+  </section>
+
+  <footer>Дані з реєстру ОСББ станом на 21.10.2026. Номери поверхів подано за реєстром.</footer>
+</div>
+<script>
+const D=[[1,{"2":[["1",3],["2",3],["3",2],["4",3],["5",0]],"3":[["6",3],["7",2],["8",2],["9",3],["10",2]],"4":[["11",0],["12",3],["13",2],["14",1],["15",2]],"5":[["16",3],["17",3],["18",3],["19",0],["20",2]],"6":[["21",3],["22",3],["23",2],["24",3],["25",3]],"7":[["26",2],["27",3],["28",2],["29",2],["30",2]],"8":[["31",3],["32",2],["33",2],["34",2],["35",3]],"9":[["36",3],["37",2],["38",0],["39",3],["40",3]],"10":[["41",3],["42",3],["43",2],["44",3],["45",3]],"11":[["46",3],["47",3],["48",3],["49",2],["50",3]],"12":[["51",3],["52",3],["53",2],["54",3],["55",2]],"13":[["56",2],["57",2],["58",3],["59",3],["60",2]],"14":[["61",2],["62",3],["63",3],["64",3],["65",2]],"15":[["66",3],["67",2],["68",3],["69",3],["70",2]],"16":[["71",2],["72",3],["73",2],["74",3],["75",3]],"17":[["76",3],["77",3],["78",2],["79",3],["80",2]],"18":[["81",3],["82",3],["83",0],["84",2],["85",2]],"19":[["86",3],["87",2],["88",2],["89",0],["90",3]],"20":[["91",3],["92",3],["93",3],["94",2],["95",3]],"21":[["96",3],["97",3],["98",2],["99",3],["100",3]],"22":[["101",2],["102",3],["103",3],["104",3],["105",2]],"23":[["106",3],["107",3],["108",3],["109",3],["110",3]],"24":[["111",3],["112",0],["113",3],["114",3],["115",3]],"25":[["116",3],["117",3],["118",3],["119",0],["120",3]]}],[2,{"2":[["121",0],["122",1],["123",0],["124",0]],"3":[["125",0],["126",0],["127",1],["128",0]],"4":[["129",0],["130",1],["131",0],["132",1]],"5":[["133",1],["134",1],["135",0],["136",1]],"6":[["137",1],["138",0],["139",0],["140",1]],"7":[["141",0],["142",1],["143",1],["144",1]],"8":[["145",0],["146",0],["147",1],["148",1]]}],[3,{"2":[["149",1],["150",0],["151",1],["152",1]],"3":[["153",0],["154",1],["155",0],["156",1]],"4":[["157",1],["158",0],["159",0],["160",1]],"5":[["161",1],["162",1],["163",1],["164",0]],"6":[["165",1],["166",0],["167",1],["168",0]],"7":[["169",1],["170",0],["171",0],["172",1]],"8":[["173",1],["174",0],["175",0],["176",1]]}],[4,{"1":[["177",0],["178",0],["179",0]],"2":[["180",0],["181",1],["182",0],["183",1]],"3":[["184",0],["185",0],["186",0],["187",0]],"4":[["188",0],["189",1],["190",0],["191",1]],"5":[["192",1],["193",1],["194",1],["195",1]],"6":[["196",0],["197",1],["198",0],["199",1]],"7":[["200",0],["201",0],["202",0],["203",1]],"8":[["204",1],["205",1],["206",0],["207",1]]}],[5,{"1":[["208",0],["209",0],["210",1]],"2":[["211",2],["212",0],["213",1],["214",1]],"3":[["215",0],["216",0],["217",2],["218",0],["219",1]],"4":[["220",2],["221",3],["222",3],["223",2],["224",2]],"5":[["225",3],["226",0],["227",3],["228",2],["229",0]],"6":[["230",3],["231",3],["232",3],["233",0],["234",0]],"7":[["235",3],["236",3],["237",0],["238",3],["239",3]],"8":[["240",3],["241",3],["242",2],["243",3],["244",3]],"9":[["245",3],["246",3],["247",3],["248",3],["249",0]],"10":[["250",2],["251",2],["252",2],["253",3],["254",3]],"11":[["255",3],["256",3],["257",3],["258",3],["259",2]],"12":[["260",1],["261",0],["262",3],["263",3],["264",3]],"13":[["261/1",2]]}],[6,{"1":[["265",0],["266",0],["267",3],["268",1]],"2":[["269",3],["270",3],["271",3],["272",3],["273",0]],"3":[["274",3],["275",3],["276",2],["277",1],["278",3]],"4":[["279",3],["280",3],["281",2],["282",0],["283",0]],"5":[["284",2],["285",3],["286",3],["287",3],["288",3]],"6":[["289",3],["290",2],["291",3],["292",0],["293",2]],"7":[["294",2],["295",3],["296",3],["297",3],["298",3]],"8":[["299",2],["300",3],["301",3],["302",3],["303",2]],"9":[["304",0],["305",3],["306",2],["307",2],["308",2]],"10":[["309",3],["310",2],["311",3],["312",3],["313",3]],"11":[["314",3],["315",3],["316",3],["317",3],["318",3]],"12":[["319",3],["320",3],["321",3],["322",3],["323",3]]}]];
+const SUMS={"1":[220805,339718],"2":[40522,0],"3":[49319,0],"4":[54022,0],"5":[109257,134500],"6":[111972,173505]};
+const GEN="var(--gen)",RES="var(--res)";
+let mode="all";const cells=[];
+const fmt=n=>n.toLocaleString("uk-UA").replace(/,/g," ")+" грн";
+const plural=(n,f)=>{const a=n%100,b=n%10;return a>10&&a<20?f[2]:b===1?f[0]:b>1&&b<5?f[1]:f[2]};
+const kv=n=>n+" "+plural(n,["квартира","квартири","квартир"]);
+function describe(c){const g=c.v&1,r=c.v&2;
+  return "Квартира "+c.a+", "+c.f+" поверх: "+(g&&r?"генератор і резервне живлення":g?"генератор":r?"резервне живлення":"ще не долучилась");}
+function build(){
+  const city=document.getElementById("city");let tot=0,g=0,r=0,b=0;
+  const maxF=Math.max(...D.map(([,fl])=>Math.max(...Object.keys(fl).map(Number))));
+  const sc=document.createElement("div");sc.className="bld scale";sc.setAttribute("aria-hidden","true");
+  sc.innerHTML='<div class="blbl"><b>0</b>0</div>';const sb=document.createElement("div");sb.className="body";
+  for(let f=maxF;f>=1;f--){const r=document.createElement("div");r.className="fl";r.innerHTML="<span>"+f+"</span>";sb.appendChild(r);}
+  const sd=document.createElement("div");sd.className="door";sb.appendChild(sd);sc.appendChild(sb);city.appendChild(sc);
+  D.forEach(([s,fl])=>{
+    const top=Math.max(...Object.keys(fl).map(Number));
+    const floors=[];for(let f=top;f>=1;f--)floors.push(f);
+    const bld=document.createElement("div");bld.className="bld";
+    const lbl=document.createElement("div");lbl.className="blbl";lbl.id="lbl"+s;bld.appendChild(lbl);
+    const body=document.createElement("div");body.className="body";
+    floors.forEach(f=>{const row=document.createElement("div");row.className="fl";
+      if(!fl[f]){row.classList.add("empty");const e=document.createElement("div");e.className="gap";row.appendChild(e);}
+      (fl[f]||[]).forEach(([a,v])=>{tot++;if(v&1)g++;if(v&2)r++;if(v===3)b++;
+        const w=document.createElement("button");w.type="button";w.className="w";
+        w.setAttribute("aria-label","Квартира "+a);
+        if(v&1){const i=document.createElement("i");i.style.background=GEN;i.dataset.k="g";w.appendChild(i);}
+        if(v&2){const i=document.createElement("i");i.style.background=RES;i.dataset.k="r";w.appendChild(i);}
+        const num=document.createElement("span");num.textContent=a;w.appendChild(num);
+        const c={a,v,s,f,el:w};cells.push(c);w.title=describe(c);
+        row.appendChild(w);});
+      body.appendChild(row);});
+    const door=document.createElement("div");door.className="door";body.appendChild(door);
+    bld.appendChild(body);city.appendChild(bld);});
+  (document.getElementById("sGen")||{}).textContent=g+" з "+tot;
+  (document.getElementById("sRes")||{}).textContent=r+" з "+tot;
+  (document.getElementById("sBoth")||{}).textContent=kv(b);
+  (document.getElementById("sNone")||{}).textContent=kv(tot-g-r+b)+" поки не долучились";
+  let G=0,R=0;Object.values(SUMS).forEach(([x,y])=>{G+=x;R+=y});
+  (document.getElementById("sGenSum")||{}).textContent="разом "+fmt(G);
+  (document.getElementById("sResSum")||{}).textContent="разом "+fmt(R);
+  const tb=document.getElementById("tbody");let T=[0,0,0];
+  D.forEach(([s])=>{const cs=cells.filter(c=>c.s===s);const cg=cs.filter(c=>c.v&1).length,cr=cs.filter(c=>c.v&2).length;
+    T[0]+=cs.length;T[1]+=cg;T[2]+=cr;
+    tb.insertAdjacentHTML("beforeend","<tr><td>Секція "+s+"</td><td>"+cs.length+"</td><td>"+cg+"</td><td>"+fmt(SUMS[s][0])+"</td><td>"+cr+"</td><td>"+fmt(SUMS[s][1])+"</td></tr>");});
+  document.getElementById("tfoot").innerHTML="<tr><td>Усього</td><td>"+T[0]+"</td><td>"+T[1]+"</td><td>"+fmt(G)+"</td><td>"+T[2]+"</td><td>"+fmt(R)+"</td></tr>";
+}
+function apply(){
+  cells.forEach(c=>{let lit=false;c.el.querySelectorAll("i").forEach(i=>{const off=(mode==="gen"&&i.dataset.k==="r")||(mode==="res"&&i.dataset.k==="g");i.style.display=off?"none":"";if(!off)lit=true;});c.el.classList.toggle("lit",lit);});
+  D.forEach(([s])=>{const cs=cells.filter(c=>c.s===s);
+    const on=cs.filter(c=>mode==="all"?c.v>0:mode==="gen"?(c.v&1):(c.v&2)).length;
+    document.getElementById("lbl"+s).innerHTML="<b>Секція "+s+"</b>"+on+" / "+cs.length;});
+  document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.m===mode)));
+}
+const inp=null;
+build();apply();
+</script>
+
+</body>
+</html>
