@@ -89,7 +89,7 @@ function build(){
   const city=document.getElementById("city");let tot=0,g=0,r=0,b=0;
   const maxF=Math.max(...D.map(([,fl])=>Math.max(...Object.keys(fl).map(Number))));
   const sc=document.createElement("div");sc.className="bld scale";sc.setAttribute("aria-hidden","true");
-  sc.innerHTML='<div class="blbl"><b>0</b>0</div>';const sb=document.createElement("div");sb.className="body";
+  sc.innerHTML='<div class="blbl"><b>0</b></div>';const sb=document.createElement("div");sb.className="body";
   for(let f=maxF;f>=1;f--){const r=document.createElement("div");r.className="fl";r.innerHTML="<span>"+f+"</span>";sb.appendChild(r);}
   const sd=document.createElement("div");sd.className="door";sb.appendChild(sd);sc.appendChild(sb);city.appendChild(sc);
   D.forEach(([s,fl])=>{
@@ -128,7 +128,7 @@ function apply(){
   cells.forEach(c=>{let lit=false;c.el.querySelectorAll("i").forEach(i=>{const off=(mode==="gen"&&i.dataset.k==="r")||(mode==="res"&&i.dataset.k==="g");i.style.display=off?"none":"";if(!off)lit=true;});c.el.classList.toggle("lit",lit);});
   D.forEach(([s])=>{const cs=cells.filter(c=>c.s===s);
     const on=cs.filter(c=>mode==="all"?c.v>0:mode==="gen"?(c.v&1):(c.v&2)).length;
-    document.getElementById("lbl"+s).innerHTML="<b>Секція "+s+"</b>"+on+" / "+cs.length;});
+    document.getElementById("lbl"+s).innerHTML="<b>Секція "+s+"</b>";});
   document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.m===mode)));
 }
 const inp=null;
