@@ -52,7 +52,13 @@ body{background:var(--paper);color:var(--ink);font-family:var(--font);font-size:
 .scale .fl span{width:20px;height:20px;line-height:20px;font-size:11px;font-weight:500;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
 .gap{height:20px;flex:1}
 .legend{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;font-size:13px;font-weight:500;color:var(--ink)}
-.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend .lg{display:inline-flex;align-items:center;gap:7px;font:inherit;color:inherit;background:none;border:1px solid transparent;border-radius:999px;padding:6px 12px}
+.legend button.lg{cursor:pointer;border-color:var(--line)}
+.legend button.lg:hover{border-color:var(--green-3)}
+.legend button.lg[aria-pressed="true"]{border-color:var(--green);background:var(--green);color:#fff}
+.legend button.lg:focus-visible{outline:2px solid var(--hl);outline-offset:2px}
+table.only-gen th:nth-child(5),table.only-gen td:nth-child(5),table.only-gen th:nth-child(6),table.only-gen td:nth-child(6),
+table.only-res th:nth-child(3),table.only-res td:nth-child(3),table.only-res th:nth-child(4),table.only-res td:nth-child(4){opacity:.3}
 .tbl{overflow-x:auto}
 table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
 th,td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
@@ -80,11 +86,11 @@ footer{font-size:12px;color:var(--muted);text-align:center}
 
   <div class="scene"><div class="city" id="city"></div></div>
 
-  <div class="legend">
-    <span><i class="dot" style="background:var(--gen)"></i>Генератор</span>
-    <span><i class="dot" style="background:var(--res)"></i>Резервне живлення</span>
-    <span><i class="dot"><i style="background:var(--gen)"></i><i style="background:var(--res)"></i></i>Обидва</span>
-    <span><i class="dot" style="background:var(--off)"></i>Не долучились</span>
+  <div class="legend" role="group" aria-label="Що показувати">
+    <button type="button" class="lg" data-m="gen" aria-pressed="false"><i class="dot" style="background:var(--gen)"></i>Генератор</button>
+    <button type="button" class="lg" data-m="res" aria-pressed="false"><i class="dot" style="background:var(--res)"></i>Резервне живлення</button>
+    <button type="button" class="lg" data-m="all" aria-pressed="true"><i class="dot"><i style="background:var(--gen)"></i><i style="background:var(--res)"></i></i>Обидва</button>
+    <span class="lg static"><i class="dot" style="background:var(--off)"></i>Не долучились</span>
   </div>
 
   <section class="tbl" aria-label="По секціях">
@@ -154,7 +160,8 @@ function apply(){
   D.forEach(([s])=>{const cs=cells.filter(c=>c.s===s);
     const on=cs.filter(c=>mode==="all"?c.v>0:mode==="gen"?(c.v&1):(c.v&2)).length;
     document.getElementById("lbl"+s).innerHTML="<b>Секція "+s+"</b>";});
-  document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.m===mode)));
+  document.querySelectorAll(".legend button.lg").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.m===mode)));
+  const t=document.querySelector("table");t.classList.toggle("only-gen",mode==="gen");t.classList.toggle("only-res",mode==="res");
 }
 const inp=null;
 const pop=document.createElement("div");pop.className="pop";pop.hidden=true;pop.setAttribute("role","dialog");document.body.appendChild(pop);
@@ -178,6 +185,7 @@ document.addEventListener("click",e=>{if(pop.hidden)return;if(pop.contains(e.tar
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closePop();});
 document.querySelector(".scene").addEventListener("scroll",closePop,{passive:true});
 build();apply();
+document.querySelectorAll(".legend button.lg").forEach(b=>b.addEventListener("click",()=>{mode=(mode===b.dataset.m&&b.dataset.m!=="all")?"all":b.dataset.m;closePop();apply();}));
 cells.forEach(c=>{c.el.removeAttribute("title");c.el.addEventListener("click",()=>{if(selEl===c.el){closePop();return;}openPop(c);});});
 </script>
 
